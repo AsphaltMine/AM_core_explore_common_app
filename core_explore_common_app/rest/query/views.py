@@ -12,7 +12,7 @@ from core_explore_common_app.utils.linked_records import pid as pid_utils
 from core_explore_common_app.utils.result import result as result_utils
 from core_main_app.access_control.exceptions import AccessControlError
 from core_main_app.commons.constants import DATA_JSON_FIELD
-from core_main_app.commons.exceptions import ApiError
+from core_main_app.commons.exceptions import ApiError, DoesNotExist
 from core_main_app.components.data import api as data_api
 from core_main_app.rest.data.abstract_views import (
     AbstractExecuteLocalQueryView,
@@ -66,6 +66,9 @@ def build_local_query(query_data):
     # update the criteria with visibility information
     if options is not None and VISIBILITY_OPTION in options:
         query_builder.add_visibility_criteria(options[VISIBILITY_OPTION])
+    # update the criteria with workspace information
+    if options is not None and options.get("workspaces"):
+        query_builder.add_list_criteria("workspace", options["workspaces"])
     # update the criteria with title information
     if title is not None:
         query_builder.add_title_criteria(title)
@@ -137,6 +140,15 @@ def format_local_results(results, request):
     data_list = []
 
     for data in results.object_list:
+        try:
+            data.content
+        except DoesNotExist:
+            logger.warning(
+                "Skipping orphaned search index entry for data %s.",
+                str(data.id),
+            )
+            continue
+
         # get data's template
         template_id = data.template_id
         # get and store data's template information
@@ -158,7 +170,7 @@ def format_local_results(results, request):
         # # Get blob attached to data if any
         try:
             blob = data.blob(request.user)
-        except AccessControlError:
+        except (AccessControlError, DoesNotExist):
             blob = None
 
         # Add Result to list of results
