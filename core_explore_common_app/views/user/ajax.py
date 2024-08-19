@@ -291,7 +291,6 @@ def get_data_source_results(request, query_id, data_source_index, page=1):
 
         # create context
         context = {}
-        context.update(request)
         context.update(context_data)
 
         # generate html with context
@@ -303,8 +302,7 @@ def get_data_source_results(request, query_id, data_source_index, page=1):
                 "data_source_results.html",
             )
         )
-        # render html
-        results_html = html_template.render(context)
+        results_html = html_template.render(context, request)
         # set response with html results
         response_dict = {
             "results": results_html,

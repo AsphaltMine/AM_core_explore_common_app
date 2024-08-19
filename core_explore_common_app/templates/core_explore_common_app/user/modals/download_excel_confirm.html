@@ -1,0 +1,29 @@
+{% extends 'core_main_app/_render/admin/theme/tools/modal.html' %}
+
+{% block modal_id %}download-excel-confirm-modal{% endblock %}
+{% block modal_title %}Download Data{% endblock %}
+
+{% block modal_body %}
+<p>Choose a download format:</p>
+<label class="excel-format-choice" for="excel-format-simple">
+    <input class="form-check-input" type="radio" name="excel-format" id="excel-format-simple" value="simple" checked>
+    <span class="excel-format-text">Simple Export (.xlsx)</span>
+    <i class="fas fa-check excel-format-check"></i>
+</label>
+<label class="excel-format-choice" for="excel-format-csv">
+    <input class="form-check-input" type="radio" name="excel-format" id="excel-format-csv" value="csv">
+    <span class="excel-format-text">Simple Export (.csv)</span>
+    <i class="fas fa-check excel-format-check"></i>
+</label>
+<label class="excel-format-choice" for="excel-format-asphaltmine">
+    <input class="form-check-input" type="radio" name="excel-format" id="excel-format-asphaltmine" value="asphaltmine">
+    <span class="excel-format-text">AsphaltMine Format (.xlsx)</span>
+    <i class="fas fa-check excel-format-check"></i>
+</label>
+<p class="text-muted mb-0 mt-2"><small><em>AsphaltMine Format is compatible with AsphaltMine upload, but takes much longer.</em></small></p>
+{% endblock %}
+
+{% block modal_footer %}
+<button class="btn btn-secondary" {% if BOOTSTRAP_VERSION|first == "4" %}data-dismiss{% elif BOOTSTRAP_VERSION|first == "5"  %}data-bs-dismiss{% endif %}="modal"><i class="fas fa-times"></i> Cancel</button>
+<button id="download-excel-confirm-yes" class="btn btn-primary"><i class="fas fa-download"></i> Download</button>
+{% endblock %}
